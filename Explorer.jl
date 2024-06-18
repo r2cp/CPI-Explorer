@@ -76,10 +76,12 @@ using DataFrames: DataFrame
         df = get_series(base, product, op)
 
         # Update plot 
-        bt = scatter(x=cpi_data[2000].dates, y=cpi_data[2000].ipc[:, 1],name="Arroz")  
-        nt = scatter(x=df.date, y=df.series, name=product, yaxis="y2")
-        trace = [bt, nt]
-        # trace = [nt]
+        if op != :index 
+            nt = scatter(x=df.date, y=df.series, name=product, yaxis="y2")
+        else
+            nt = scatter(x=df.date, y=df.series, name=product) 
+        end
+        trace = [nt]
 
         # Update table
         table_data = DataTable(df)
