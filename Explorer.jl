@@ -27,6 +27,8 @@ using DataFrames: DataFrame
 
     @private df = DataFrame(date=Date[], series=Float32[])
     @out table_data = DataTable(DataFrame(date = Date[], series = Float32[]))
+    @in id = 0
+    @in rowcontent = ""
     
     @in select_base = 2000
     @out opts = cpi_data[2000].names 
@@ -87,6 +89,17 @@ using DataFrames: DataFrame
         table_data = DataTable(df)
     end
 
+    @onchange select_product begin
+        @show select_product
+    end
+
+    @onchange id begin 
+        @show id
+    end
+    @onchange rowcontent begin 
+        @show rowcontent
+    end
+
 end
 
 function ui()
@@ -95,7 +108,7 @@ function ui()
         row([
             cell(class="col-md-3", [
                 select(:select_base, options = [2000, 2010, 2023], label = "Base del IPC"),
-                select(:select_product, options = :opts, label = "Producto"),
+                select(:select_product, options=:opts, label="Producto", clearable=true, useinput=true, multiple=true, usechips=true),
                 select(:select_op, 
                     options = [
                         # (op=:index,    val="Índice"), 
@@ -115,7 +128,8 @@ function ui()
             ]),
             cell(class="", [
                 plot(:trace, layout=:layout, class="sync_data"),
-                table(:table_data, flat = true, bordered = true, title = "Datos"),
+                p("Row: {{id}}, {{rowcontent}}"),
+                table(:table_data, flat = true, bordered = true, var"v-on:row-click"="function(event,row) {id=row.__id;rowcontent=row}"),
             ]),
         ])
     ]
